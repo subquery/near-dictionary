@@ -1,27 +1,27 @@
-import { TerraEvent, TerraMessage } from "@subql/types-terra";
+import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
 import { Event, Message } from "../types";
 
 
-export async function handleEvent(event: TerraEvent) {
+export async function handleEvent(event: CosmosEvent) {
 
-    const blockHeight = BigInt(event.block.block.block.header.height);
-    const eventStore = new Event(`${event.block.block.block_id.hash}-${event.tx.tx.txhash}-${event.idx}`);
+    const blockHeight = BigInt(event.block.block.header.height);
+    const eventStore = new Event(`${event.block.block.id}-${event.tx.tx.hash}-${event.idx}`);
     eventStore.blockHeight = blockHeight;
-    eventStore.txHash = event.tx.tx.txhash;
+    eventStore.txHash = event.tx.tx.hash;
     eventStore.type = event.event.type;
-    eventStore.msgType = event.msg.msg.toData()["@type"];
-    const msgData = event.msg.msg.toData();
+    eventStore.msgType = event.msg.msg.typeUrl;
+    const msgData = event.msg.msg;
     eventStore.data = Object.keys(msgData).map(key => ({ key: key, value: msgData[key] }));
     await eventStore.save();
 }
 
-export async function handleMessage(message: TerraMessage) {
-    const blockHeight = BigInt(message.block.block.block.header.height);
-    const messageStore = new Message(`${message.block.block.block_id.hash}-${message.tx.tx.txhash}-${message.idx}`);
+export async function handleMessage(message: CosmosMessage) {
+    const blockHeight = BigInt(message.block.block.header.height);
+    const messageStore = new Message(`${message.block.block.id}-${message.tx.tx.hash}-${message.idx}`);
     messageStore.blockHeight = blockHeight;
-    messageStore.txHash = message.tx.tx.txhash;
-    messageStore.type = message.msg.toData()["@type"];
-    const msgData = message.msg.toData();
+    messageStore.txHash = message.tx.tx.hash;
+    messageStore.type = message.msg.typeUrl;
+    const msgData = message.msg;
     messageStore.data = Object.keys(msgData).map(key => ({ key: key, value: msgData[key] }));
     await messageStore.save();
 }
