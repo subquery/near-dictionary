@@ -4,15 +4,16 @@ version: 1.0.0
 runner:
   node:
     name: '@subql/node-cosmos'
-    version: "latest"
+    version: "*"
   query:
     name: '@subql/query'
-    version: "latest"
+    version: "*"
 description: A SubQuery project provide dictionary data & service for the Terra network
 schema:
   file: ./schema.graphql
 network:
   chainId: juno-1
+  # endpoint: https://rpc.juno-1.beta.api.onfinality.io/
   endpoint: https://rpc-juno.itastakers.com/
 
 dataSources:

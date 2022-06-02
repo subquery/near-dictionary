@@ -1,7 +1,6 @@
 import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
 import { Event, Message } from "../types";
 
-
 export async function handleEvent(event: CosmosEvent) {
 
     const blockHeight = BigInt(event.block.block.header.height);
