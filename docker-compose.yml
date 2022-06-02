@@ -10,23 +10,23 @@ services:
     environment:
       POSTGRES_PASSWORD: postgres
 
-  # subquery-node:
-  #   image: onfinality/subql-node-cosmos:latest
-  #   depends_on:
-  #     - "postgres"
-  #   restart: always
-  #   environment:
-  #     DB_USER: postgres
-  #     DB_PASS: postgres
-  #     DB_DATABASE: postgres
-  #     DB_HOST: postgres
-  #     DB_PORT: 5432
-  #   volumes:
-  #     - ./:/app
-  #   command:
-  #     - -f=/app
-  #     - --db-schema=app
-  #     - --batch-size=5
+  subquery-node:
+    image: onfinality/subql-node-cosmos:latest
+    depends_on:
+      - "postgres"
+    restart: always
+    environment:
+      DB_USER: postgres
+      DB_PASS: postgres
+      DB_DATABASE: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./:/app
+    command:
+      - -f=/app
+      - --db-schema=app
+      - --batch-size=5
   graphql-engine:
     image: onfinality/subql-query:latest
     ports:

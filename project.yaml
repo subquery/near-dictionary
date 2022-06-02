@@ -13,8 +13,7 @@ schema:
   file: ./schema.graphql
 network:
   chainId: juno-1
-  # endpoint: https://rpc.juno-1.beta.api.onfinality.io/
-  endpoint: https://rpc-juno.itastakers.com/
+  endpoint: https://rpc.juno-1.beta.api.onfinality.io/
 
 dataSources:
   - kind: cosmos/Runtime
