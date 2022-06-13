@@ -18,7 +18,11 @@ network:
 dataSources:
   - kind: cosmos/Runtime
     startBlock: 3062001
-    # startBlock: 3168000
+    chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
+      cosmos.slashing.v1beta1:
+        file: "./proto/cosmos/slashing/v1beta1/tx.proto"
+        messages:
+          - "MsgUnjail"
     mapping:
       file: ./dist/index.js
       handlers:
