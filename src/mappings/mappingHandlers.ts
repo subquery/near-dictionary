@@ -3,24 +3,26 @@ import { Event, Message } from "../types";
 
 export async function handleEvent(event: CosmosEvent) {
     const blockHeight = BigInt(event.block.block.header.height);
-    const eventStore = new Event(`${event.block.block.id}-${event.tx.hash}-${event.idx}`);
-    eventStore.blockHeight = blockHeight;
-    eventStore.txHash = event.tx.hash;
-    eventStore.type = event.event.type;
-    eventStore.msgType = event.msg.msg.typeUrl;
-    const msgData = event.msg.msg;
-    eventStore.data = Object.keys(msgData).map(key => ({ key: key, value: msgData[key] }));
+    const eventStore = Event.create({
+        id: `${event.block.block.id}-${event.tx.hash}-${event.idx}`,
+        blockHeight,
+        txHash: event.tx.hash,
+        type: event.event.type,
+        msgType: event.msg.msg.typeUrl,
+        data: event.msg.msg,
+    });
     await eventStore.save();
 }
 
 export async function handleMessage(message: CosmosMessage) {
     const blockHeight = BigInt(message.block.block.header.height);
-    const messageStore = new Message(`${message.block.block.id}-${message.tx.hash}-${message.idx}`);
-    messageStore.blockHeight = blockHeight;
-    messageStore.txHash = message.tx.hash;
-    messageStore.type = message.msg.typeUrl;
-    const msgData = message.msg;
-    messageStore.data = Object.keys(msgData).map(key => ({ key: key, value: msgData[key] }));
+    const messageStore = Message.create({
+        id: `${message.block.block.id}-${message.tx.hash}-${message.idx}`,
+        blockHeight,
+        txHash: message.tx.hash,
+        type: message.msg.typeUrl,
+        data: message.msg,
+    });
     await messageStore.save();
 }
 
