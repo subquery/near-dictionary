@@ -9,7 +9,7 @@ export async function handleEvent(event: CosmosEvent) {
         txHash: event.tx.hash,
         type: event.event.type,
         msgType: event.msg.msg.typeUrl,
-        data: event.msg.msg,
+        data: event.msg.msg.decodedMsg,
     });
     await eventStore.save();
 }
@@ -21,7 +21,7 @@ export async function handleMessage(message: CosmosMessage) {
         blockHeight,
         txHash: message.tx.hash,
         type: message.msg.typeUrl,
-        data: message.msg,
+        data: message.msg.decodedMsg,
     });
     await messageStore.save();
 }
