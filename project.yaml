@@ -19,6 +19,14 @@ network:
       file: "./proto/cosmos/slashing/v1beta1/tx.proto"
       messages:
         - "MsgUnjail"
+    cosmos.gov.v1beta1:
+      file: "./proto/cosmos/gov/v1beta1/tx.proto"
+      messages:
+        - "MsgVoteWeighted"
+    cosmos.gov.v1beta1.gov: # Key is not used, it matches the one above and is inferred from the file
+      file: "./proto/cosmos/gov/v1beta1/gov.proto"
+      messages:
+        - "WeightedVoteOption"
 
 dataSources:
   - kind: cosmos/Runtime
