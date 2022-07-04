@@ -1,5 +1,5 @@
 specVersion: 1.0.0
-name: stargaze-dictionary
+name: fetchhub-dictionary
 version: 1.0.0
 runner:
   node:
@@ -12,9 +12,8 @@ description: A SubQuery project provide dictionary data & service for the Terra 
 schema:
   file: ./schema.graphql
 network:
-  chainId: stargaze-1
-  # endpoint: https://rpc.stargaze-apis.com/
-  endpoint: https://nodes.stargaze-1.publicawesome.dev:26657/
+  chainId: fetchhub-4
+  endpoint: https://rpc-fetchhub.fetch.ai
   chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
     cosmos.slashing.v1beta1:
       file: "./proto/cosmos/slashing/v1beta1/tx.proto"
@@ -31,7 +30,7 @@ network:
 
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 1
+    startBlock: 5300201
     mapping:
       file: ./dist/index.js
       handlers:
