@@ -28,14 +28,22 @@ network:
       file: "./proto/cosmos/gov/v1beta1/gov.proto"
       messages:
         - "WeightedVoteOption"
+    cosmos.base.v1beta1: # needed by MsgCreateVestingAccount
+      file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
+      messages:
+        - "Coin"
     publicawesome.stargaze.claim.v1beta1: # Key is not used, it matches the one above and is inferred from the file
       file: "./proto/stargaze/claim/v1beta1/tx.proto"
       messages:
         - "MsgInitialClaim"
+    publicawesome.stargaze.alloc.v1beta1: # Key is not used, it matches the one above and is inferred from the file
+      file: "./proto/stargaze/alloc/v1beta1/tx.proto"
+      messages:
+        - "MsgCreateVestingAccount"
 
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 1
+    startBlock: 254280
     mapping:
       file: ./dist/index.js
       handlers:
