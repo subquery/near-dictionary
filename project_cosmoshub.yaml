@@ -35,6 +35,7 @@ network:
       file: "./proto/tendermint/liquidity/v1beta1/tx.proto"
       messages:
         - "MsgCreatePool"
+        - "MsgSwapWithinBatch"
 
 dataSources:
   - kind: cosmos/Runtime
