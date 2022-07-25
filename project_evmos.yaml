@@ -1,0 +1,66 @@
+specVersion: 1.0.0
+name: cosmoshub-dictionary
+version: 1.0.0
+runner:
+  node:
+    name: '@subql/node-cosmos'
+    version: ">=0.1.0"
+  query:
+    name: '@subql/query'
+    version: "*"
+description: A SubQuery project provide dictionary data & service for the Terra network
+schema:
+  file: ./ethermintschema.graphql
+network:
+  chainId: evmos_9001-2
+  endpoint: https://rpc-evmos.whispernode.com
+  chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
+    cosmos.base.v1beta1: # needed by MsgCreatePool
+      file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
+      messages:
+        - "Coin"
+    cosmos.slashing.v1beta1:
+      file: "./proto/cosmos/slashing/v1beta1/tx.proto"
+      messages:
+        - "MsgUnjail"
+    cosmos.gov.v1beta1:
+      file: "./proto/cosmos/gov/v1beta1/tx.proto"
+      messages:
+        - "MsgVoteWeighted"
+    cosmos.gov.v1beta1.gov: # Key is not used, it matches the one above and is inferred from the file
+      file: "./proto/cosmos/gov/v1beta1/gov.proto"
+      messages:
+        - "WeightedVoteOption"
+    tendermint.liquidity.v1beta1:
+      file: "./proto/tendermint/liquidity/v1beta1/tx.proto"
+      messages:
+        - "MsgCreatePool"
+        - "MsgSwapWithinBatch"
+        - "MsgDepositWithinBatch"
+        - "MsgWithdrawWithinBatch"
+    ethermint.evm.v1:
+      file: "./proto/ethermint/evm/v1/tx.proto"
+      messages:
+        - "MsgEthereumTx"
+        - "LegacyTx"
+        - "AccessListTx"
+        - "DynamicFeeTx"
+    ethermint.evm.v12:
+      file: "./proto/ethermint/evm/v1/evm.proto"
+      messages:
+        - "AccessTuple"
+    google.protobuf:
+      file: "./proto/google/protobuf/any.proto"
+      messages:
+        - "Any"
+
+dataSources:
+  - kind: cosmos/Runtime
+    startBlock: 6910153
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        - handler: handleEvent
+          kind: cosmos/EventHandler
+        - handler: handleMessage
+          kind: cosmos/MessageHandler
