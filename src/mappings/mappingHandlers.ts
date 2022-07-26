@@ -1,3 +1,4 @@
+import { Registry } from "@cosmjs/proto-signing";
 import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
 import { Event, EvmLog, EvmTransaction, Message } from "../types";
 import { inputToFunctionSighash, isSuccess, isZero } from "../utils";
@@ -38,7 +39,7 @@ export async function handleMessage(message: CosmosMessage) {
 export async function handleEvmTransaction(message: CosmosMessage) {
     const blockHeight = BigInt(message.block.block.header.height);
     const tx = message.msg.decodedMsg as any;
-    const decodedTx = (global as any).registry.decodedMsg(tx.data);
+    const decodedTx = registry.decode(tx.data);
 
     const func = isZero(decodedTx.data) ? undefined : inputToFunctionSighash(decodedTx.data);
 
@@ -57,6 +58,7 @@ export async function handleEvmTransaction(message: CosmosMessage) {
 export async function handleEvmLog(event: CosmosEvent) {
     const log = event.log;
     const blockHeight = BigInt(event.block.block.header.height);
+    const evmLogs: EvmLog[] = [];
     for(const attr of log.events.find(evt => evt.type === 'ethereumTx').attributes) {
         if(attr.key !== 'txLog') {
             continue;
@@ -71,7 +73,9 @@ export async function handleEvmLog(event: CosmosEvent) {
             topics2: tx.topics[2],
             topics3: tx.topics[3],
         })
+        evmLogs.push(evmLog);
 
-        await evmLog.save();
     }
+
+    await store.bulkCreate('EvmLog', evmLogs);
 }

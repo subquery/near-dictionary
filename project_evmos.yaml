@@ -10,7 +10,7 @@ runner:
     version: "*"
 description: A SubQuery project provide dictionary data & service for the Terra network
 schema:
-  file: ./ethermintschema.graphql
+  file: ./schema.graphql
 network:
   chainId: evmos_9001-2
   endpoint: https://rpc-evmos.whispernode.com
