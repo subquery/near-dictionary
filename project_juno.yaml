@@ -3,10 +3,10 @@ name: juno-dictionary
 version: 1.0.0
 runner:
   node:
-    name: '@subql/node-cosmos'
-    version: ">=0.1.0"
+    name: "@subql/node-cosmos"
+    version: "*"
   query:
-    name: '@subql/query'
+    name: "@subql/query"
     version: "*"
 description: A SubQuery project provide dictionary data & service for the Terra network
 schema:
@@ -30,7 +30,7 @@ network:
 
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 3062001
+    startBlock: 4136532
     mapping:
       file: ./dist/index.js
       handlers:
