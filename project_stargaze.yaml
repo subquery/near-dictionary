@@ -14,7 +14,7 @@ schema:
 network:
   chainId: stargaze-1
   # endpoint: https://rpc.stargaze-apis.com/
-  endpoint: http://nodes.stargaze-1.publicawesome.dev:26657/
+  endpoint: http://nodes.stargaze-1.publicawesome.dev:26657
   chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
     cosmos.slashing.v1beta1:
       file: "./proto/cosmos/slashing/v1beta1/tx.proto"
