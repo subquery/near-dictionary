@@ -17,4 +17,11 @@ export function isSuccess(rawLog: string, index: number): boolean {
     } catch (e) {
       return false;
     }
-  }
+}
+
+export function stripObjectUnicode(t: object): object {
+    return JSON.parse(
+        JSON.stringify(t)
+            .replace(/\\u[0-9A-Fa-f]{4}/g, '')
+    );
+}

@@ -1,7 +1,6 @@
-import { Registry } from "@cosmjs/proto-signing";
 import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
 import { Event, EvmLog, EvmTransaction, Message } from "../types";
-import { inputToFunctionSighash, isSuccess, isZero } from "../utils";
+import { inputToFunctionSighash, isSuccess, isZero, stripObjectUnicode } from "../utils";
 
 export async function handleEvent(event: CosmosEvent) {
     const blockHeight = BigInt(event.block.block.header.height);
@@ -11,7 +10,7 @@ export async function handleEvent(event: CosmosEvent) {
         txHash: event.tx.hash,
         type: event.event.type,
         msgType: event.msg.msg.typeUrl,
-        data: event.msg.msg.decodedMsg,
+        data: stripObjectUnicode(event.msg.msg.decodedMsg),
     });
     await eventStore.save();
 
@@ -22,13 +21,21 @@ export async function handleEvent(event: CosmosEvent) {
 
 export async function handleMessage(message: CosmosMessage) {
     const blockHeight = BigInt(message.block.block.header.height);
+
+
+    // Strip escaped unicode characters
+    // Example problem message https://www.mintscan.io/crypto-org/txs/6DB02272D59D920EE9058E59231E9906C240FB82F2E756761CBADCEDF4EBFAE0
+    // Not supported by postgres jsonb https://www.postgresql.org/docs/current/datatype-json.html
+    const data = stripObjectUnicode(message.msg.decodedMsg);
+
     const messageStore = Message.create({
         id: `${message.block.block.id}-${message.tx.hash}-${message.idx}`,
         blockHeight,
         txHash: message.tx.hash,
         type: message.msg.typeUrl,
-        data: message.msg.decodedMsg,
+        data,
     });
+
     await messageStore.save();
 
     if(message.msg.typeUrl === "/ethermint.evm.v1.MsgEthereumTx") {
