@@ -1,5 +1,7 @@
+import { Registry } from "@cosmjs/proto-signing";
 import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
-import { Event, Message } from "../types";
+import { Event, EvmLog, EvmTransaction, Message } from "../types";
+import { inputToFunctionSighash, isSuccess, isZero } from "../utils";
 
 export async function handleEvent(event: CosmosEvent) {
     const blockHeight = BigInt(event.block.block.header.height);
@@ -12,6 +14,10 @@ export async function handleEvent(event: CosmosEvent) {
         data: event.msg.msg.decodedMsg,
     });
     await eventStore.save();
+
+    if(event.event.type === 'ethereumTx') {
+       await handleEvmLog(event);
+    }
 }
 
 export async function handleMessage(message: CosmosMessage) {
@@ -24,5 +30,52 @@ export async function handleMessage(message: CosmosMessage) {
         data: message.msg.decodedMsg,
     });
     await messageStore.save();
+
+    if(message.msg.typeUrl === "/ethermint.evm.v1.MsgEthereumTx") {
+        await handleEvmTransaction(message);
+    }
 }
 
+export async function handleEvmTransaction(message: CosmosMessage) {
+    const blockHeight = BigInt(message.block.block.header.height);
+    const tx = message.msg.decodedMsg as any;
+    const decodedTx = registry.decode(tx.data);
+
+    const func = isZero(decodedTx.data) ? undefined : inputToFunctionSighash(decodedTx.data);
+
+    const txStore = EvmTransaction.create({
+        id: `${message.block.block.id}-${message.tx.hash}-${message.idx}`,
+        txHash: tx.hash,
+        blockHeight,
+        from: tx.from,
+        to: decodedTx.to,
+        func: func,
+        success: isSuccess(message.tx.tx.log, message.idx),
+    });
+    await txStore.save();
+}
+
+export async function handleEvmLog(event: CosmosEvent) {
+    const log = event.log;
+    const blockHeight = BigInt(event.block.block.header.height);
+    const evmLogs: EvmLog[] = [];
+    for(const attr of log.events.find(evt => evt.type === 'ethereumTx').attributes) {
+        if(attr.key !== 'txLog') {
+            continue;
+        }
+        const tx = JSON.parse(attr.value);
+        const evmLog = EvmLog.create({
+            id: `${event.block.block.id}-${event.tx.hash}-${event.idx}`,
+            blockHeight,
+            address: tx.address,
+            topics0: tx.topics[0],
+            topics1: tx.topics[1],
+            topics2: tx.topics[2],
+            topics3: tx.topics[3],
+        })
+        evmLogs.push(evmLog);
+
+    }
+
+    await store.bulkCreate('EvmLog', evmLogs);
+}
