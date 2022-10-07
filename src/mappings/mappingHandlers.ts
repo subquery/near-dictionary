@@ -22,13 +22,24 @@ export async function handleEvent(event: CosmosEvent) {
 
 export async function handleMessage(message: CosmosMessage) {
     const blockHeight = BigInt(message.block.block.header.height);
+
+
+    // Strip escaped unicode characters
+    // Example problem message https://www.mintscan.io/crypto-org/txs/6DB02272D59D920EE9058E59231E9906C240FB82F2E756761CBADCEDF4EBFAE0
+    // Not supported by postgres jsonb https://www.postgresql.org/docs/current/datatype-json.html
+    const data = JSON.parse(
+        JSON.stringify(message.msg.decodedMsg)
+            .replace(/\\u[0-9A-Fa-f]{4}/g, '')
+    );
+
     const messageStore = Message.create({
         id: `${message.block.block.id}-${message.tx.hash}-${message.idx}`,
         blockHeight,
         txHash: message.tx.hash,
         type: message.msg.typeUrl,
-        data: message.msg.decodedMsg,
+        data,
     });
+
     await messageStore.save();
 
     if(message.msg.typeUrl === "/ethermint.evm.v1.MsgEthereumTx") {
