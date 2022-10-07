@@ -3,10 +3,10 @@ name: stargaze-dictionary
 version: 1.0.0
 runner:
   node:
-    name: '@subql/node-cosmos'
-    version: ">=0.1.0"
+    name: "@subql/node-cosmos"
+    version: "*"
   query:
-    name: '@subql/query'
+    name: "@subql/query"
     version: "*"
 description: A SubQuery project provide dictionary data & service for the Terra network
 schema:
@@ -14,7 +14,7 @@ schema:
 network:
   chainId: stargaze-1
   # endpoint: https://rpc.stargaze-apis.com/
-  endpoint: http://nodes.stargaze-1.publicawesome.dev:26657/
+  endpoint: http://nodes.stargaze-1.publicawesome.dev:26657
   chainTypes: # This is a beta feature that allows support for any Cosmos chain by importing the correct protobuf messages
     cosmos.slashing.v1beta1:
       file: "./proto/cosmos/slashing/v1beta1/tx.proto"
