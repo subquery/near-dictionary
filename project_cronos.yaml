@@ -41,4 +41,3 @@ dataSources:
           kind: cosmos/EventHandler
         - handler: handleMessage
           kind: cosmos/MessageHandler
-          
