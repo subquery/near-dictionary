@@ -37,6 +37,7 @@ network:
         - "MsgTransferTokens"
         - "MsgConvertVouchersResponse"
         - "MsgTransferTokensResponse"
+        - "MsgUpdateTokenMapping"
         - "MsgUpdateTokenMappingResponse"
 
 dataSources:
