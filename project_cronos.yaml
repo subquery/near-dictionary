@@ -30,6 +30,19 @@ network:
       file: "./proto/google/protobuf/any.proto"
       messages:
         - "Any"
+    cosmos.base.v1beta1: # needed by MsgTransferTokens
+      file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
+      messages:
+        - "Coin"
+    cronos:
+      file: "./proto/cronos/tx.proto"
+      messages:
+        - "MsgConvertVouchers"
+        - "MsgTransferTokens"
+        - "MsgConvertVouchersResponse"
+        - "MsgTransferTokensResponse"
+        - "MsgUpdateTokenMapping"
+        - "MsgUpdateTokenMappingResponse"
 
 dataSources:
   - kind: cosmos/Runtime
