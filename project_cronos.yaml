@@ -30,6 +30,14 @@ network:
       file: "./proto/google/protobuf/any.proto"
       messages:
         - "Any"
+    cronos:
+      file: "./proto/cronos/tx.proto"
+      messages:
+        - "MsgConvertVouchers"
+        - "MsgTransferTokens"
+        - "MsgConvertVouchersResponse"
+        - "MsgTransferTokensResponse"
+        - "MsgUpdateTokenMappingResponse"
 
 dataSources:
   - kind: cosmos/Runtime
