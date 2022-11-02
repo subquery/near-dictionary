@@ -34,11 +34,39 @@ network:
       file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
       messages:
         - "Coin"
+
+    google.protobuf:
+      file: "./proto/google/protobuf/duration.proto"
+      messages:
+        - Duration
+    osmosis.gamm.v1beta1.pool:
+      file: "./proto/osmosis/gamm/v1beta1/pool.proto"
+      messages:
+        - Pool
+        - PoolAsset
+        - PoolParams
+        - SmoothWeightChangeParams
     osmosis.gamm.v1beta1:
       file: "./proto/osmosis/gamm/v1beta1/tx.proto"
       messages:
+        - MsgCreatePool
         - MsgJoinPool
         - MsgSwapExactAmountIn
+        - MsgExitPool
+        - MsgSwapExactAmountOut
+        - MsgJoinSwapExternAmountIn
+        - MsgJoinSwapShareAmountOut
+        - MsgExitSwapShareAmountIn
+        - MsgExitSwapExternAmountOut
+    osmosis.lockup:
+      file: "./proto/osmosis/lockup/tx.proto"
+      messages:
+        - MsgLockTokens
+        - MsgBeginUnlockingAll
+        - MsgBeginUnlocking
+        - MsgExtendLockup
+        - MsgForceUnlock
+        - MsgUnlockPeriodLock
 
 dataSources:
   - kind: cosmos/Runtime
