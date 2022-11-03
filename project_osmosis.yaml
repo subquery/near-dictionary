@@ -34,11 +34,14 @@ network:
       file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
       messages:
         - "Coin"
-
     google.protobuf:
       file: "./proto/google/protobuf/duration.proto"
       messages:
         - Duration
+    google.protobuf.timestamp:
+      file: "./proto/google/protobuf/timestamp.proto"
+      messages:
+        - Timestamp
     osmosis.gamm.v1beta1.pool:
       file: "./proto/osmosis/gamm/v1beta1/pool.proto"
       messages:
