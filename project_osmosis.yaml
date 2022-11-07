@@ -61,6 +61,11 @@ network:
         - MsgJoinSwapShareAmountOut
         - MsgExitSwapShareAmountIn
         - MsgExitSwapExternAmountOut
+    osmosis.lockup.lock:
+      file: "./proto/osmosis/lockup/lock.proto"
+      messages:
+        - PeriodLock
+        - QueryCondition
     osmosis.lockup:
       file: "./proto/osmosis/lockup/tx.proto"
       messages:
@@ -70,6 +75,11 @@ network:
         - MsgExtendLockup
         - MsgForceUnlock
         - MsgUnlockPeriodLock
+    osmosis.incentives:
+      file: "./proto/osmosis/incentives/tx.proto"
+      messages:
+        - MsgCreateGauge
+        - MsgAddToGauge
 
 dataSources:
   - kind: cosmos/Runtime
