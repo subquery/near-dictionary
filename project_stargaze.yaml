@@ -36,6 +36,11 @@ network:
       file: "./proto/stargaze/claim/v1beta1/tx.proto"
       messages:
         - "MsgInitialClaim"
+        - "MsgClaimFor"
+    publicawesome.stargaze.claim.v1beta1.claim_record: # Key is not used, it matches the one above and is inferred from the file
+      file: "./proto/stargaze/claim/v1beta1/claim_record.proto"
+      messages:
+        - "ClaimRecord"
     publicawesome.stargaze.alloc.v1beta1: # Key is not used, it matches the one above and is inferred from the file
       file: "./proto/stargaze/alloc/v1beta1/tx.proto"
       messages:
