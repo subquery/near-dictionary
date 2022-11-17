@@ -7,6 +7,7 @@ import "cosmos/base/v1beta1/coin.proto";
 option go_package = "github.com/osmosis-labs/osmosis/v7/x/gamm/types";
 
 service Msg {
+  rpc CreatePool(MsgCreatePool) returns (MsgCreatePoolResponse);
   rpc JoinPool(MsgJoinPool) returns (MsgJoinPoolResponse);
   rpc ExitPool(MsgExitPool) returns (MsgExitPoolResponse);
   rpc SwapExactAmountIn(MsgSwapExactAmountIn)
@@ -21,6 +22,22 @@ service Msg {
       returns (MsgExitSwapExternAmountOutResponse);
   rpc ExitSwapShareAmountIn(MsgExitSwapShareAmountIn)
       returns (MsgExitSwapShareAmountInResponse);
+}
+
+// ===================== MsgCreatePool
+// This has been taken from github.com/osmosis-labs/osmosis tag v3.1.0
+message MsgCreatePool {
+  string sender = 1 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
+
+  PoolParams poolParams = 2 [
+    (gogoproto.moretags) = "yaml:\"pool_params\"",
+    (gogoproto.nullable) = false
+  ];
+
+  repeated PoolAsset poolAssets = 3 [ (gogoproto.nullable) = false ];
+
+  string future_pool_governor = 4
+      [ (gogoproto.moretags) = "yaml:\"future_pool_governor\"" ];
 }
 
 // ===================== MsgJoinPool

@@ -20,8 +20,9 @@ export function isSuccess(rawLog: string, index: number): boolean {
 }
 
 export function stripObjectUnicode(t: object): object {
+    // Warning negative lookbehind `(?<!\\)` in regex might not work in all JS versions
     return JSON.parse(
         JSON.stringify(t)
-            .replace(/\\u[0-9A-Fa-f]{4}/g, '')
+            .replace(/(?<!\\)\\u[0-9A-Fa-f]{4}/g, '')
     );
 }
