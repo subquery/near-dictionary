@@ -46,6 +46,9 @@ export async function handleEvent(event: CosmosEvent) {
 }
 
 export async function handleMessage(message: CosmosMessage) {
+    if(!checkedAliases) {
+        await setAliases();
+    }
     const blockHeight = BigInt(message.block.block.header.height);
 
     // Strip escaped unicode characters
@@ -70,9 +73,7 @@ export async function handleMessage(message: CosmosMessage) {
 }
 
 export async function handleEvmTransaction(message: CosmosMessage) {
-    if(!checkedAliases) {
-        await setAliases();
-    }
+
     const blockHeight = BigInt(message.block.block.header.height);
     const tx = message.msg.decodedMsg as any;
     const decodedTx = registry.decode(tx.data);

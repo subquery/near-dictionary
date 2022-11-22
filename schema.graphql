@@ -1,5 +1,5 @@
 type ChainAliases @entity {
-  id: String!
+  id: ID!
   value: String!
 }
 
