@@ -1,6 +1,32 @@
 import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
-import { Event, EvmLog, EvmTransaction, Message } from "../types";
+import { Event, EvmLog, EvmTransaction, Message, ChainAliases } from "../types";
 import { inputToFunctionSighash, isSuccess, isZero, stripObjectUnicode } from "../utils";
+
+const evmChainId: Record<string, string> = {
+    'cronosmainnet_25-1': '25',
+    'cronostestnet_338-1':'338'
+}
+
+let checkedAliases = false;
+
+async function setAliases() {
+    if (checkedAliases) return;
+
+    const cosmosChainId = await (global as any).api.getChainId();
+    if(!evmChainId[cosmosChainId]) {
+        checkedAliases = true;
+        return;
+    }
+
+    const chianAliases = ChainAliases.create({
+        id: 'chainId',
+        value: evmChainId[cosmosChainId]
+    })
+
+    await chianAliases.save();
+
+    checkedAliases = true;
+}
 
 export async function handleEvent(event: CosmosEvent) {
     const blockHeight = BigInt(event.block.block.header.height);
@@ -44,6 +70,9 @@ export async function handleMessage(message: CosmosMessage) {
 }
 
 export async function handleEvmTransaction(message: CosmosMessage) {
+    if(!checkedAliases) {
+        await setAliases();
+    }
     const blockHeight = BigInt(message.block.block.header.height);
     const tx = message.msg.decodedMsg as any;
     const decodedTx = registry.decode(tx.data);

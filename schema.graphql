@@ -1,3 +1,8 @@
+type ChainAliases @entity {
+  id: String!
+  value: String!
+}
+
 # Equivalent to typescript any type
 type AnyJSON @jsonField {
   # Need to have one value in this field
