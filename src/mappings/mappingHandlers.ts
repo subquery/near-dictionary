@@ -19,7 +19,7 @@ async function setAliases() {
     }
 
     const chianAliases = ChainAliases.create({
-        id: 'chainId',
+        id: 'evmChainId',
         value: evmChainId[cosmosChainId]
     })
 
@@ -46,9 +46,8 @@ export async function handleEvent(event: CosmosEvent) {
 }
 
 export async function handleMessage(message: CosmosMessage) {
-    if(!checkedAliases) {
-        await setAliases();
-    }
+    await setAliases();
+
     const blockHeight = BigInt(message.block.block.header.height);
 
     // Strip escaped unicode characters
