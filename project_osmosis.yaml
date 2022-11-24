@@ -70,6 +70,7 @@ network:
       file: "./proto/osmosis/lockup/tx.proto"
       messages:
         - MsgLockTokens
+        - MsgUnlockTokens
         - MsgBeginUnlockingAll
         - MsgBeginUnlocking
         - MsgExtendLockup
