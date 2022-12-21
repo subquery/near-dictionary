@@ -1,5 +1,5 @@
 {
-  "name": "terra-dictionary",
+  "name": "near-dictionary",
   "version": "1.0.0",
   "description": "A SubQuery project provide dictionary data & service for the Terra network",
   "main": "dist/index.js",
@@ -21,13 +21,10 @@
   "author": "SubQuery Team",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@cosmjs/stargate": "^0.28.9",
     "@subql/cli": "latest",
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@ethersproject/bytes": "^5.6.1",
-    "@subql/types-cosmos": "latest",
     "@types/node": "^17.0.21",
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",
