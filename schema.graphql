@@ -1,7 +1,3 @@
-type ChainAliases @entity {
-  id: ID!
-  value: String!
-}
 
 # Equivalent to typescript any type
 type AnyJSON @jsonField {
@@ -9,39 +5,17 @@ type AnyJSON @jsonField {
   _: String
 }
 
-type Message @entity {
+type Transaction @entity {
+  id: ID!
+  sender: String! @index
+  receiver: String! @index
+  blockHeight: BigInt! @index
+}
+
+type Action @entity {
   id: ID!
   txHash: String! @index
   type: String! @index
   data: AnyJSON!
   blockHeight: BigInt! @index
-}
-
-type Event @entity {
-  id: ID!
-  txHash: String! @index
-  type: String! @index
-  msgType: String! @index
-  blockHeight: BigInt! @index
-  data: AnyJSON!
-}
-
-type EvmTransaction @entity {
-  id: ID!
-  txHash: String! @index
-  from: String! @index
-  to: String! @index
-  func: String @index
-  blockHeight: BigInt! @index
-  success: Boolean!
-}
-
-type EvmLog @entity {
-  id: ID!
-  address: String! @index
-  blockHeight: BigInt! @index
-  topics0: String! @index
-  topics1: String
-  topics2: String
-  topics3: String
 }
