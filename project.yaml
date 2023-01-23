@@ -1,0 +1,31 @@
+specVersion: "1.0.0"
+
+name: "near-dictionary"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-near"
+    version: "*"
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This is a dictionary project for near"
+repository: "https://github.com/subquery/near-dictionary"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+  endpoint: "https://archival-rpc.mainnet.near.org"
+  chainId: "mainnet"
+
+dataSources:
+  - kind: near/Runtime
+    startBlock: 80980000
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleTransaction
+          kind: near/TransactionHandler
+        - handler: handleAction
+          kind: near/ActionHandler

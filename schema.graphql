@@ -1,0 +1,21 @@
+
+# Equivalent to typescript any type
+type AnyJSON @jsonField {
+  # Need to have one value in this field
+  _: String
+}
+
+type Transaction @entity {
+  id: ID!
+  sender: String! @index
+  receiver: String! @index
+  blockHeight: BigInt! @index
+}
+
+type Action @entity {
+  id: ID!
+  txHash: String! @index
+  type: String! @index
+  data: AnyJSON!
+  blockHeight: BigInt! @index
+}
