@@ -25,7 +25,6 @@ dataSources:
     mapping:
       file: "./dist/index.js"
       handlers:
-        - handler: handleTransaction
-          kind: near/TransactionHandler
-        - handler: handleAction
-          kind: near/ActionHandler
+        - handler: handleBlock
+          kind: near/BlockHandler
+
