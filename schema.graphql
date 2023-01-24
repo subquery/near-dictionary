@@ -1,4 +1,3 @@
-
 type Transaction @entity {
   id: ID!
   sender: String! @index
@@ -10,20 +9,14 @@ type Action @entity {
   id: ID!
   txHash: String! @index
   type: String! @index
-  
-  # DeployContract
-  code: String
+
+  blockHeight: BigInt! @index
+  sender: String! @index
+  receiver: String! @index
 
   # FunctionCall
   methodName: String
   args: String
-  gas: BigInt
-
-  # Transfer, FunctionCall
-  deposit: BigInt
-
-  # Stake
-  stake: BigInt
 
   # Stake, AddKey, DeleteKey
   publicKey: String
@@ -33,6 +26,4 @@ type Action @entity {
 
   # DeleteAccount
   beneficiaryId: String
-
-  blockHeight: BigInt! @index
 }

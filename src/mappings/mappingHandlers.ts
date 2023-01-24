@@ -1,4 +1,4 @@
-import {NearTransaction, NearAction, ActionType, DeployContract, FunctionCall, Transfer, Stake, AddKey, DeleteKey, DeleteAccount, NearBlock} from "@subql/types-near"
+import {NearTransaction, NearAction, ActionType, DeployContract, FunctionCall, Transfer, Stake, AddKey, DeleteKey, DeleteAccount, NearBlock} from "@subql/types-near";
 import { Action, Transaction } from "../types";
 
 export function stripObjectUnicode(t: object): object {
@@ -17,42 +17,35 @@ export async function handleBlock(block: NearBlock) {
 }
 
 export function handleTransaction(tx: NearTransaction) {
-    const blockHeight = BigInt(tx.block_height);
-    const txStore = Transaction.create({
+    return Transaction.create({
         id: `${tx.block_hash}-${tx.result.id}`,
-        blockHeight,
+        blockHeight: BigInt(tx.block_height),
         sender: tx.signer_id,
         receiver: tx.receiver_id,
     });
-
-    return txStore;
 }
 
 export function handleAction(action: NearAction) {
-    const blockHeight = BigInt(action.transaction.block_height);
     const actionStore = new Action(`${action.transaction.block_hash}-${action.transaction.result.id}-${action.id}`)
-    actionStore.blockHeight = blockHeight;
+    actionStore.blockHeight = BigInt(action.transaction.block_height);
     actionStore.txHash = action.transaction.result.id;
     actionStore.type = action.type;
+    actionStore.sender = action.transaction.signer_id;
+    actionStore.receiver = action.transaction.receiver_id;
     
     switch(action.type) {
         case ActionType.DeployContract:
             action = action as NearAction<DeployContract>;
-            actionStore.code = action.action.code;
             break;
         case ActionType.FunctionCall:
             action = action as NearAction<FunctionCall>;
             actionStore.methodName = action.action.args;
-            actionStore.gas = action.action.gas;
-            actionStore.deposit = action.action.deposit;
             break;
         case ActionType.Transfer:
             action = action as NearAction<Transfer>;
-            actionStore.deposit = action.action.deposit;
             break;
         case ActionType.Stake:
             action = action as NearAction<Stake>;
-            actionStore.stake = action.action.stake;
             break;
         case ActionType.AddKey:
             action = action as NearAction<AddKey>;

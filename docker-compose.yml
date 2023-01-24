@@ -18,7 +18,7 @@ services:
       retries: 5
 
   subquery-node:
-    image: onfinality/subql-node-cosmos:latest
+    image: onfinality/subql-node-near:latest
     depends_on:
       "postgres":
         condition: service_healthy
@@ -32,10 +32,9 @@ services:
     volumes:
       - ./:/app
     command:
-      - -f=/app/project_osmosis.yaml
+      - -f=/app/project.yaml
       - --db-schema=app
       - --disable-historical=true
-      - --batch-size=5
     healthcheck:
       test: ["CMD", "curl", "-f", "http://subquery-node:3000/ready"]
       interval: 3s
