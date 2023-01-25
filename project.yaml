@@ -18,6 +18,7 @@ schema:
 network:
   endpoint: "https://archival-rpc.mainnet.near.org"
   chainId: "mainnet"
+  bypassBlocks: [81003306]
 
 dataSources:
   - kind: near/Runtime
