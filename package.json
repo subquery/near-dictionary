@@ -1,7 +1,7 @@
 {
   "name": "near-dictionary",
   "version": "1.0.0",
-  "description": "A SubQuery project provide dictionary data & service for the Terra network",
+  "description": "A SubQuery project provide dictionary data & service for the NEAR network",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
@@ -11,8 +11,8 @@
     "prepack": "rm -rf dist && npm run build",
     "test": "jest"
   },
-  "homepage": "https://github.com/subquery/terra-dictionary",
-  "repository": "github:subquery/terra-dictionary",
+  "homepage": "https://github.com/subquery/near-dictionary",
+  "repository": "github:subquery/near-dictionary",
   "files": [
     "dist",
     "schema.graphql",
@@ -25,7 +25,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@subql/types-near": "^0.0.1-0",
+    "@subql/types-near": "latest",
     "@types/node": "^17.0.21",
     "pino": "^7.8.0",
     "ts-proto": "^1.112.1",

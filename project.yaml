@@ -18,7 +18,7 @@ schema:
 network:
   endpoint: "https://archival-rpc.mainnet.near.org"
   chainId: "mainnet"
-  bypassBlocks: [81003306]
+  bypassBlocks: [81003306] # This is a missing block from the NEAR chain that we are skipping
 
 dataSources:
   - kind: near/Runtime
