@@ -28,4 +28,3 @@ dataSources:
       handlers:
         - handler: handleBlock
           kind: near/BlockHandler
-

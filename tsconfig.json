@@ -9,10 +9,7 @@
     "module": "commonjs",
     "outDir": "dist",
     "rootDir": "src",
-    "target": "esnext",
+    "target": "esnext"
   },
-  "include": [
-    "src/**/*",
-    "node_modules/@subql/types-near/dist/global.d.ts"
-  ]
+  "include": ["src/**/*", "node_modules/@subql/types-near/dist/global.d.ts"]
 }
