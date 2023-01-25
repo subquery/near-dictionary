@@ -22,7 +22,7 @@ network:
 
 dataSources:
   - kind: near/Runtime
-    startBlock: 80980000
+    startBlock: 9820210
     mapping:
       file: "./dist/index.js"
       handlers:
