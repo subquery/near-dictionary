@@ -10,8 +10,9 @@ import {
   DeleteKey,
   DeleteAccount,
   NearBlock,
+  NearTransactionReceipt,
 } from "@subql/types-near";
-import { Action, Transaction } from "../types";
+import { Action, Receipt, Transaction } from "../types";
 
 export function stripObjectUnicode(t: object): object {
   // Warning negative lookbehind `(?<!\\)` in regex might not work in all JS versions
@@ -21,8 +22,10 @@ export function stripObjectUnicode(t: object): object {
 export async function handleBlock(block: NearBlock) {
   const txs = block.transactions.map((tx) => handleTransaction(tx));
   const actions = block.actions.map((action) => handleAction(action));
+  const receipts = block.receipts.map((receipt) => handleReceipt(receipt));
   await store.bulkCreate("Transaction", txs);
   await store.bulkCreate("Action", actions);
+  await store.bulkCreate("Receipt", receipts);
 }
 
 export function handleTransaction(tx: NearTransaction) {
@@ -34,15 +37,42 @@ export function handleTransaction(tx: NearTransaction) {
   });
 }
 
-export function handleAction(action: NearAction) {
-  const actionStore = new Action(
-    `${action.transaction.block_hash}-${action.transaction.result.id}-${action.id}`
+export function handleReceipt(receipt: NearTransactionReceipt) {
+  const receiptStore = new Receipt(
+    `${receipt.block_height}-${receipt.receipt_id}`
   );
-  actionStore.blockHeight = BigInt(action.transaction.block_height);
-  actionStore.txHash = action.transaction.result.id;
+
+  receiptStore.blockHeight = BigInt(receipt.block_height);
+  receiptStore.sender = receipt.predecessor_id;
+  receiptStore.receiver = receipt.receiver_id;
+  if(receipt.Action) {
+    receiptStore.singer = receipt.Action.signer_id;
+  }
+
+  return receiptStore;
+}
+
+export function handleAction(action: NearAction) {
+  const hash = action.transaction ?
+  `${action.transaction.block_height}-${action.transaction.result.id}-${action.id}`:
+  `${action.receipt.block_height}-${action.receipt.receipt_id}-${action.id}`;
+
+  const actionStore = new Action(hash);
+
+  const height = action.transaction ? BigInt(action.transaction.block_height) : BigInt(action.receipt.block_height);
+  actionStore.blockHeight = height;
+  
+  if(action.transaction) {
+    actionStore.txHash = action.transaction.result.id;
+  }
+
   actionStore.type = action.type;
-  actionStore.sender = action.transaction.signer_id;
-  actionStore.receiver = action.transaction.receiver_id;
+  actionStore.sender = action.transaction ? action.transaction.signer_id : action.receipt.predecessor_id;
+  actionStore.receiver = action.transaction ? action.transaction.receiver_id : action.receipt.receiver_id;
+
+  if(action.receipt && action.receipt.Action) {
+    actionStore.signer = action.receipt.Action.signer_id;
+  }
 
   switch (action.type) {
     case ActionType.DeployContract:

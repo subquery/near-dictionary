@@ -5,14 +5,24 @@ type Transaction @entity {
   blockHeight: BigInt! @index
 }
 
+type Receipt @entity {
+  id: ID!
+  sender: String! @index
+  receiver: String! @index
+  singer: String @index
+  blockHeight: BigInt! @index
+}
+
 type Action @entity {
   id: ID!
-  txHash: String! @index
+  txHash: String @index
+  receiptId: String @index
   type: String! @index
 
   blockHeight: BigInt! @index
   sender: String! @index
   receiver: String! @index
+  signer: String @index
 
   # FunctionCall
   methodName: String
