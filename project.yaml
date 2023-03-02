@@ -5,7 +5,7 @@ version: "0.0.1"
 runner:
   node:
     name: "@subql/node-near"
-    version: "*"
+    version: ">=1.19.0"
   query:
     name: "@subql/query"
     version: "*"
