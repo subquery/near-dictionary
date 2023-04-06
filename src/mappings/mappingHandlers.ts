@@ -20,7 +20,7 @@ export function stripObjectUnicode(t: object): object {
 
 export async function handleBlock(block: NearBlock) {
   const txs = block.transactions.map((tx) => handleTransaction(tx));
-  const actions = block.actions.map((action) => handleAction(action));
+  const actions = block.actions.map((action) => handleAction(action, block.header.height));
   await store.bulkCreate("Transaction", txs);
   await store.bulkCreate("Action", actions);
 }
@@ -34,15 +34,13 @@ export function handleTransaction(tx: NearTransaction) {
   });
 }
 
-export function handleAction(action: NearAction) {
-  const actionStore = new Action(
-    `${action.transaction.block_hash}-${action.transaction.result.id}-${action.id}`
-  );
-  actionStore.blockHeight = BigInt(action.transaction.block_height);
-  actionStore.txHash = action.transaction.result.id;
+export function handleAction(action: NearAction, blockHeight: number) {
+  logger.warn(`XXXXX ${JSON.stringify(action)}`)
+  const actionStore = new Action(`${action.receipt.id}-${action.id}`);
+  actionStore.blockHeight = BigInt(blockHeight);
   actionStore.type = action.type;
-  actionStore.sender = action.transaction.signer_id;
-  actionStore.receiver = action.transaction.receiver_id;
+  actionStore.sender = action.receipt.predecessor_id;
+  actionStore.receiver = action.receipt.receiver_id;
 
   switch (action.type) {
     case ActionType.DeployContract:

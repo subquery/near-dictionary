@@ -7,7 +7,6 @@ type Transaction @entity {
 
 type Action @entity {
   id: ID!
-  txHash: String! @index
   type: String! @index
 
   blockHeight: BigInt! @index
