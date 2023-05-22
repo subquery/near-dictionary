@@ -38,13 +38,13 @@ export function handleTransaction(tx: NearTransaction) {
 }
 
 export function handleReceipt(receipt: NearTransactionReceipt) {
-  const receiptStore = new Receipt(
-    `${receipt.block_height}-${receipt.receipt_id}`
-  );
+  const receiptStore = Receipt.create({
+    id: `${receipt.block_height}-${receipt.receipt_id}`,
+    blockHeight: BigInt(receipt.block_height),
+    sender: receipt.predecessor_id,
+    receiver: receipt.receiver_id,
+  });
 
-  receiptStore.blockHeight = BigInt(receipt.block_height);
-  receiptStore.sender = receipt.predecessor_id;
-  receiptStore.receiver = receipt.receiver_id;
   if(receipt.Action) {
     receiptStore.singer = receipt.Action.signer_id;
   }
@@ -53,22 +53,31 @@ export function handleReceipt(receipt: NearTransactionReceipt) {
 }
 
 export function handleAction(action: NearAction) {
-  const hash = action.transaction ?
-  `${action.transaction.block_height}-${action.transaction.result.id}-${action.id}`:
-  `${action.receipt.block_height}-${action.receipt.receipt_id}-${action.id}`;
+  let actionStore: Action;
 
-  const actionStore = new Action(hash);
+  if (action.transaction) {
+    actionStore = Action.create({
+      id: `${action.transaction.block_height}-${action.transaction.result.id}-${action.id}`,
+      type: action.type,
+      blockHeight: BigInt(action.transaction.block_height),
+      sender: action.transaction.signer_id,
+      receiver: action.transaction.receiver_id,
+    });
+  } else if (action.receipt) {
+    actionStore = Action.create({
+      id: `${action.receipt.block_height}-${action.receipt.receipt_id}-${action.id}`,
+      type: action.type,
+      blockHeight: BigInt(action.receipt.block_height),
+      sender: action.receipt.predecessor_id,
+      receiver: action.receipt.receiver_id,
+    });
+  } else {
+    throw new Error('No transaction or receipt');
+  }
 
-  const height = action.transaction ? BigInt(action.transaction.block_height) : BigInt(action.receipt.block_height);
-  actionStore.blockHeight = height;
-  
   if(action.transaction) {
     actionStore.txHash = action.transaction.result.id;
   }
-
-  actionStore.type = action.type;
-  actionStore.sender = action.transaction ? action.transaction.signer_id : action.receipt.predecessor_id;
-  actionStore.receiver = action.transaction ? action.transaction.receiver_id : action.receipt.receiver_id;
 
   if(action.receipt && action.receipt.Action) {
     actionStore.signer = action.receipt.Action.signer_id;
