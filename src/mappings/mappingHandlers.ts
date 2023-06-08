@@ -14,6 +14,10 @@ import {
 } from "@subql/types-near";
 import { Action, Receipt, Transaction } from "../types";
 
+(BigInt as any).prototype.toJSON = function () {
+  return `${this.toString()}n`;
+};
+
 export function stripObjectUnicode(t: object): object {
   // Warning negative lookbehind `(?<!\\)` in regex might not work in all JS versions
   return JSON.parse(JSON.stringify(t).replace(/(?<!\\)\\u[0-9A-Fa-f]{4}/g, ""));
@@ -23,6 +27,10 @@ export async function handleBlock(block: NearBlock) {
   const txs = block.transactions.map((tx) => handleTransaction(tx));
   const actions = block.actions.map((action) => handleAction(action));
   const receipts = block.receipts.map((receipt) => handleReceipt(receipt));
+
+  logger.warn(`TX: ${JSON.stringify(txs)}`);
+  logger.warn(`Action: ${JSON.stringify(actions)}`);
+  // logger.warn(`Receipt: ${JSON.stringify(receipts)}`);
   await store.bulkCreate("Transaction", txs);
   await store.bulkCreate("Action", actions);
   await store.bulkCreate("Receipt", receipts);
@@ -88,8 +96,7 @@ export function handleAction(action: NearAction) {
       action = action as NearAction<DeployContract>;
       break;
     case ActionType.FunctionCall:
-      action = action as NearAction<FunctionCall>;
-      actionStore.methodName = action.action.args;
+      actionStore.methodName = (action as NearAction<FunctionCall>).action.method_name;
       break;
     case ActionType.Transfer:
       action = action as NearAction<Transfer>;
@@ -98,17 +105,14 @@ export function handleAction(action: NearAction) {
       action = action as NearAction<Stake>;
       break;
     case ActionType.AddKey:
-      action = action as NearAction<AddKey>;
-      actionStore.publicKey = action.action.publicKey;
-      actionStore.accessKey = action.action.accessKey;
+      actionStore.publicKey = (action as NearAction<AddKey>).action.public_key;
+      // actionStore.accessKey = (action as NearAction<AddKey>).action.access_key;
       break;
     case ActionType.DeleteKey:
-      action = action as NearAction<DeleteKey>;
-      actionStore.publicKey = action.action.publicKey;
+      actionStore.publicKey = (action as NearAction<DeleteKey>).action.public_key;
       break;
     case ActionType.DeleteAccount:
-      action = action as NearAction<DeleteAccount>;
-      actionStore.beneficiaryId = action.action.beneficiaryId;
+      actionStore.beneficiaryId = (action as NearAction<DeleteAccount>).action.beneficiary_id;
       break;
     case ActionType.CreateAccount:
       //nothing to store

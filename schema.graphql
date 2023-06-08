@@ -32,7 +32,7 @@ type Action @entity {
   publicKey: String
 
   # AddKey
-  accessKey: String
+  # accessKey: String
 
   # DeleteAccount
   beneficiaryId: String
