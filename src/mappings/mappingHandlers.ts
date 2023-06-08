@@ -28,9 +28,6 @@ export async function handleBlock(block: NearBlock) {
   const actions = block.actions.map((action) => handleAction(action));
   const receipts = block.receipts.map((receipt) => handleReceipt(receipt));
 
-  logger.warn(`TX: ${JSON.stringify(txs)}`);
-  logger.warn(`Action: ${JSON.stringify(actions)}`);
-  // logger.warn(`Receipt: ${JSON.stringify(receipts)}`);
   await store.bulkCreate("Transaction", txs);
   await store.bulkCreate("Action", actions);
   await store.bulkCreate("Receipt", receipts);
