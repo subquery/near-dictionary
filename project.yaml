@@ -6,6 +6,9 @@ runner:
   node:
     name: "@subql/node-near"
     version: ">=1.19.0"
+    options:
+      unfinalizedBlocks: false
+      historical: false
   query:
     name: "@subql/query"
     version: "*"

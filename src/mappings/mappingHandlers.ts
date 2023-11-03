@@ -28,9 +28,15 @@ export async function handleBlock(block: NearBlock) {
   const actions = block.actions.map((action) => handleAction(action));
   const receipts = block.receipts.map((receipt) => handleReceipt(receipt));
 
-  await store.bulkCreate("Transaction", txs);
-  await store.bulkCreate("Action", actions);
-  await store.bulkCreate("Receipt", receipts);
+  for (const tx of txs) {
+    await tx.save()
+  }
+  for (const action of actions) {
+    await action.save()
+  }
+  for (const receipt of receipts) {
+    await receipt.save()
+  }
 }
 
 export function handleTransaction(tx: NearTransaction) {

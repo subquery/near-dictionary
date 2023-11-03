@@ -12,5 +12,9 @@
     "target": "esnext",
     "strict": true,
   },
-  "include": ["src/**/*", "node_modules/@subql/types-near/dist/global.d.ts"]
+  "include": [
+    "src/**/*",
+    "node_modules/@subql/types-near/dist/global.d.ts",
+    "node_modules/@subql/types-core/dist/global.d.ts"
+  ]
 }
