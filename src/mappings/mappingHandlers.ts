@@ -120,6 +120,9 @@ export function handleAction(action: NearAction) {
     case ActionType.CreateAccount:
       //nothing to store
       break;
+    case ActionType.SignedDelegate:
+      //nothing to store
+      break;
     default:
       throw new Error(`Unknown Action Type: ${action.type}`);
   }
