@@ -23,6 +23,10 @@ network:
   chainId: "mainnet"
   bypassBlocks: [81003306] # This is a missing block from the NEAR chain that we are skipping
 
+parent:
+  block: 89972378
+  reference: QmZxPa9aezhZn1iEfL2o13Nwg84pZ6cTKrHbKqDmWTzsci
+
 dataSources:
   - kind: near/Runtime
     startBlock: 9820210

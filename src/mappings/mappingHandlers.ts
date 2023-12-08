@@ -1,16 +1,8 @@
 import {
   NearTransaction,
   NearAction,
-  ActionType,
-  DeployContract,
-  FunctionCall,
-  Transfer,
-  Stake,
-  AddKey,
-  DeleteKey,
-  DeleteAccount,
   NearBlock,
-  NearTransactionReceipt,
+  NearTransactionReceipt, DelegateAction, SignedDelegate, ActionType,
 } from "@subql/types-near";
 import { Action, Receipt, Transaction } from "../types";
 
@@ -25,14 +17,15 @@ export function stripObjectUnicode(t: object): object {
 
 export async function handleBlock(block: NearBlock) {
   const txs = block.transactions.map((tx) => handleTransaction(tx));
-  const actions = block.actions.map((action) => handleAction(action));
+  const actions = block.actions.map(async (action) => await handleAction(action));
   const receipts = block.receipts.map((receipt) => handleReceipt(receipt));
 
   for (const tx of txs) {
     await tx.save()
   }
   for (const action of actions) {
-    await action.save()
+    await (await action).save()
+
   }
   for (const receipt of receipts) {
     await receipt.save()
@@ -63,7 +56,7 @@ export function handleReceipt(receipt: NearTransactionReceipt) {
   return receiptStore;
 }
 
-export function handleAction(action: NearAction) {
+export async function handleAction(action: NearAction) {
   let actionStore: Action;
 
   if (action.transaction) {
@@ -94,37 +87,36 @@ export function handleAction(action: NearAction) {
     actionStore.signer = action.receipt.Action.signer_id;
   }
 
-  switch (action.type) {
-    case ActionType.DeployContract:
-      action = action as NearAction<DeployContract>;
-      break;
-    case ActionType.FunctionCall:
-      actionStore.methodName = (action as NearAction<FunctionCall>).action.method_name;
-      break;
-    case ActionType.Transfer:
-      action = action as NearAction<Transfer>;
-      break;
-    case ActionType.Stake:
-      action = action as NearAction<Stake>;
-      break;
-    case ActionType.AddKey:
-      actionStore.publicKey = (action as NearAction<AddKey>).action.public_key;
-      // actionStore.accessKey = (action as NearAction<AddKey>).action.access_key;
-      break;
-    case ActionType.DeleteKey:
-      actionStore.publicKey = (action as NearAction<DeleteKey>).action.public_key;
-      break;
-    case ActionType.DeleteAccount:
-      actionStore.beneficiaryId = (action as NearAction<DeleteAccount>).action.beneficiary_id;
-      break;
-    case ActionType.CreateAccount:
-      //nothing to store
-      break;
-    case ActionType.SignedDelegate:
-      //nothing to store
-      break;
-    default:
-      throw new Error(`Unknown Action Type: ${action.type}`);
+  actionStore.methodName = action.action?.method_name;
+  actionStore.publicKey = action.action?.public_key !== undefined
+      ? action.action.public_key
+      : action.action?.signature?.publicKey;
+  actionStore.beneficiaryId = action.action?.beneficiary_id
+
+
+  if (action.action?.delegate_action?.actions) {
+    let delegateActions: Action[]= [];
+    for (let index = 0; index < action.action.delegate_action.actions.length; index++) {
+      const nestedAction = action.action.delegate_action.actions[index];
+
+      const [reconstructedNestedAction] = Object.entries(nestedAction).map(([key, value]) => {
+        return {
+          id: index,
+          receipt: action.receipt,
+          type: ActionType[key as keyof typeof ActionType],
+          action: value,
+          transaction: {...action.transaction},
+        };
+      });
+
+      const nestedActionStore = await handleAction(reconstructedNestedAction);
+      nestedActionStore.id = `${actionStore.id}-${index}`
+      delegateActions.push(nestedActionStore);
+    }
+
+    if (delegateActions.length > 0) {
+     await store.bulkCreate('Action', delegateActions)
+    }
   }
 
   return actionStore;
