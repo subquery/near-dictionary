@@ -17,14 +17,14 @@ export function stripObjectUnicode(t: object): object {
 
 export async function handleBlock(block: NearBlock) {
   const txs = block.transactions.map((tx) => handleTransaction(tx));
-  const actions = block.actions.map(async (action) => await handleAction(action));
+  const actions = block.actions.map((action) => handleAction(action));
   const receipts = block.receipts.map((receipt) => handleReceipt(receipt));
 
   for (const tx of txs) {
     await tx.save()
   }
-  for (const action of actions) {
-    await (await action).save()
+  for (const actionList of actions) {
+    await store.bulkCreate('Action', actionList)
 
   }
   for (const receipt of receipts) {
@@ -56,7 +56,8 @@ export function handleReceipt(receipt: NearTransactionReceipt) {
   return receiptStore;
 }
 
-export async function handleAction(action: NearAction) {
+export function handleAction(action: NearAction): Action[]{
+  const actionStoreList: Action[] = []
   let actionStore: Action;
 
   if (action.transaction) {
@@ -88,36 +89,33 @@ export async function handleAction(action: NearAction) {
   }
 
   actionStore.methodName = action.action?.method_name;
-  actionStore.publicKey = action.action?.public_key !== undefined
-      ? action.action.public_key
-      : action.action?.signature?.publicKey;
-  actionStore.beneficiaryId = action.action?.beneficiary_id
+  actionStore.publicKey = action.action?.public_key;
+  actionStore.beneficiaryId = action.action?.beneficiary_id;
 
 
   if (action.action?.delegate_action?.actions) {
-    let delegateActions: Action[]= [];
-    for (let index = 0; index < action.action.delegate_action.actions.length; index++) {
-      const nestedAction = action.action.delegate_action.actions[index];
-
-      const [reconstructedNestedAction] = Object.entries(nestedAction).map(([key, value]) => {
-        return {
-          id: index,
-          receipt: action.receipt,
-          type: ActionType[key as keyof typeof ActionType],
-          action: value,
-          transaction: {...action.transaction},
-        };
-      });
-
-      const nestedActionStore = await handleAction(reconstructedNestedAction);
-      nestedActionStore.id = `${actionStore.id}-${index}`
-      delegateActions.push(nestedActionStore);
-    }
-
-    if (delegateActions.length > 0) {
-     await store.bulkCreate('Action', delegateActions)
-    }
+    const nestedActions: Action[] = action.action?.delegate_action?.actions.map((nestedNearAction: NearAction, index: number) => {
+        const [reconstructedNestedAction] = Object.entries(nestedNearAction).map(([key, value]) => {
+          return {
+            id: action.id,
+            receipt: action.receipt,
+            type: ActionType[key as keyof typeof ActionType],
+            action: {
+              ...value,
+              ...action.action?.delegate_action
+            },
+            transaction: {...action.transaction},
+          } as NearAction;
+        });
+      const [nestedActionStore] =  handleAction(
+          reconstructedNestedAction
+      )
+      nestedActionStore.id = `${nestedActionStore.id}-${index}`
+      return nestedActionStore
+    })
+    actionStoreList.push(...nestedActions)
   }
 
-  return actionStore;
+  actionStoreList.push(actionStore)
+  return actionStoreList
 }

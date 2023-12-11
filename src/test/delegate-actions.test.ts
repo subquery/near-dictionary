@@ -32,7 +32,7 @@ subqlTest(
             signer: undefined,
             methodName: 'nft_batch_mint',
             args: undefined,
-            publicKey: undefined,
+            publicKey: 'ed25519:Sr2JGF6pLkdoY73ehKtjHpEFi5g1GV8otrr4pqL5EBo',
             beneficiaryId: undefined
         }),
     ],
