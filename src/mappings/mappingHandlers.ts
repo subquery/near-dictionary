@@ -23,9 +23,8 @@ export async function handleBlock(block: NearBlock) {
   for (const tx of txs) {
     await tx.save()
   }
-  for (const actionList of actions) {
-    await store.bulkCreate('Action', actionList)
-
+  for (const actionList of actions.flat()) {
+    await actionList.save()
   }
   for (const receipt of receipts) {
     await receipt.save()
