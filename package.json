@@ -9,7 +9,7 @@
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && npm run build",
-    "test": "jest"
+    "test": "subql build && subql-node-near test"
   },
   "homepage": "https://github.com/subquery/near-dictionary",
   "repository": "github:subquery/near-dictionary",
@@ -22,6 +22,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@subql/cli": "latest",
+    "@subql/testing": "latest",
     "typescript": "^5.0.4"
   },
   "dependencies": {
