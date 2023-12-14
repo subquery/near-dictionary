@@ -1,0 +1,37 @@
+specVersion: "1.0.0"
+
+name: "near-dictionary"
+version: "0.0.1"
+runner:
+  node:
+    name: "@subql/node-near"
+    version: ">=3.4.1"
+    options:
+      unfinalizedBlocks: false
+      historical: false
+  query:
+    name: "@subql/query"
+    version: "*"
+description: "This is a dictionary project for near"
+repository: "https://github.com/subquery/near-dictionary"
+
+schema:
+  file: "./schema.graphql"
+
+network:
+  endpoint: "https://archival-rpc.mainnet.near.org"
+  chainId: "mainnet"
+  bypassBlocks: [81003306] # This is a missing block from the NEAR chain that we are skipping
+
+parent:
+  block: 90010949
+  reference: QmVyuBYFjk4yuauWerZz4FVCphoxtPcseq6K5tgWnyPUUw
+
+dataSources:
+  - kind: near/Runtime
+    startBlock: 9820210
+    mapping:
+      file: "./dist/index.js"
+      handlers:
+        - handler: handleBlock
+          kind: near/BlockHandler

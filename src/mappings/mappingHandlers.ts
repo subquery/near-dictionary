@@ -103,7 +103,7 @@ export function handleAction(action: NearAction): Action[]{
               ...value,
               ...action.action?.delegate_action
             },
-            transaction: {...action.transaction},
+            transaction: action.transaction,
           } as NearAction;
         });
       const [nestedActionStore] =  handleAction(
